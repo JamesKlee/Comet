@@ -1,2 +1,11 @@
-: foreach *.cpp |> g++ -Wall -c %f -o %o |> %B.o
-: *.o |> g++ %f -o %o |> hello
+OUTPUT_FILE += game
+
+COMPILER += g++
+CFLAGS += -Wall
+SFML_INCLUDE += -I../SFML/include
+SFML_LIB += -L../SFML/lib
+SFML_LIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
+
+
+: foreach *.cpp |> $(COMPILER) $(CFLAGS) -c %f $(SFML_INCLUDE) -o %o |> %B.o
+: *.o |> g++ %f -o %o $(SFML_LIB) $(SFML_LIBS) |> $(OUTPUT_FILE)
