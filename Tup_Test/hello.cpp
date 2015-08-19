@@ -2,13 +2,15 @@
 
 int main()
 {
-   	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!", sf::Style::Fullscreen);
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+
+   	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!", sf::Style::Fullscreen, settings);
 	window.setVerticalSyncEnabled(true);
-	sf::CircleShape shape(100.f, 8);
+	sf::CircleShape shape(100.f, 4);
     	shape.setFillColor(sf::Color::Green);
 
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x/4, window.getSize().y/4));
-	view.setViewport(sf::FloatRect(0, 0, 1, 1));
 	window.setView(view);
 
 	float cameraSpeed = 25.0f;
