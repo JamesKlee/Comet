@@ -12,7 +12,6 @@ int main()
 
 	sf::View view(sf::FloatRect(0, 0, window.getSize().x/4, window.getSize().y/4));
 	window.setView(view);
-
 	float cameraSpeed = 25.0f;
 	sf::Clock clock;
     	while (window.isOpen())
@@ -43,7 +42,6 @@ int main()
         	}	
 		
 			if (true) {
-				
 			}	
 
 			float moveViewX = 0.0f;
