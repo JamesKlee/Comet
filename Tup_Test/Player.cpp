@@ -6,6 +6,15 @@ Player::Player() {
 
 	circle = new sf::CircleShape(100.f, 10000);
 	circle->setFillColor(sf::Color::Green);
+
+	srand(time(NULL));
+	moveSpeedX = rand()%((int)SPEED*2 + 1) - (int)SPEED;
+	moveSpeedY = pow(pow(SPEED,2) - pow(moveSpeedX,2),0.5);
+	
+	if (rand()%(2) == 0) {
+		moveSpeedY = -moveSpeedY;			
+	}
+
 };
 
 Player::~Player() {
@@ -14,14 +23,6 @@ Player::~Player() {
 
 void Player::update(sf::RenderWindow* window, sf::Clock clock) {
 	
-	srand(time(NULL));
-	float moveSpeedX = rand()%((int)SPEED*2 + 1) - (int)SPEED;
-	float moveSpeedY = pow(pow(SPEED,2) - pow(moveSpeedX,2),0.5);
-	if (rand()%(2) == 0) {
-		moveSpeedY = -moveSpeedY;			
-	}
-
-
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		moveSpeedX = -SPEED;
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
@@ -38,6 +39,14 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock) {
 	
 	sf::Vector2f position = Player::boundCheckScreen(newPosition, window, circle->getGlobalBounds());
 	circle->setPosition(position);
+
+	if (position.x <= 0.f || position.x + circle->getGlobalBounds().width >= window->getSize().x) {
+		moveSpeedX = -moveSpeedX;
+	}
+
+	if (position.y <= 0.f || position.y + circle->getGlobalBounds().height>= window->getSize().y) {
+		moveSpeedY = -moveSpeedY;
+	}
 
 	window->draw(*circle);	
 };
