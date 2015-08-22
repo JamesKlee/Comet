@@ -12,7 +12,9 @@ class Player: public Updateable {
 	private:
 		
 		sf::CircleShape* circle;
-		float SPEED; 
+		float SPEED;
+		float moveSpeedX;
+		float moveSpeedY;
 };
 
 #endif
