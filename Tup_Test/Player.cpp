@@ -1,7 +1,7 @@
 #include "Player.hpp"
 #include <math.h>
 
-Player::Player() {
+Player::Player() : Player::Updateable() {
 	SPEED = 1000.0f;
 
 	circle = new sf::CircleShape(100.f, 10000);
@@ -35,9 +35,10 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock) {
 	}
 
 	sf::Vector2f velocity(moveSpeedX, moveSpeedY);
-	sf::Vector2f newPosition = Player::updatePosition(circle->getPosition(), velocity, clock);
+	Player::updatePosition(circle->getPosition(), velocity, clock);
+
 	
-	sf::Vector2f position = Player::boundCheckScreen(newPosition, window, circle->getGlobalBounds());
+	sf::Vector2f position = Player::checkCollisions(window, circle->getGlobalBounds());
 	circle->setPosition(position);
 
 	if (position.x <= 0.f || position.x + circle->getGlobalBounds().width >= window->getSize().x) {

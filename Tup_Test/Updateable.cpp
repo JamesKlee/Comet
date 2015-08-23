@@ -1,8 +1,12 @@
 #include "Updateable.hpp"
 
-sf::Vector2f Updateable::boundCheckScreen(sf::Vector2f position, sf::RenderWindow* window, sf::FloatRect bounds) {
-	float positionX = position.x;
-	float positionY = position.y;
+Updateable::Updateable() {
+	screenCollision = 0;
+};
+
+void Updateable::boundCheckScreen(sf::RenderWindow* window, sf::FloatRect bounds) {
+	float positionX = newPosition.x;
+	float positionY = newPosition.y;
 
 	unsigned int screenHeight = window->getSize().y;
 	unsigned int screenWidth = window->getSize().x;
@@ -11,22 +15,34 @@ sf::Vector2f Updateable::boundCheckScreen(sf::Vector2f position, sf::RenderWindo
 	float shapeHeight = bounds.height;
 
 	if (positionX < 0.f) {
-		positionX = 0.f;	
+		positionX = 0.f;
+		screenCollision = 1;
 	} else if (positionX + shapeWidth > screenWidth) {
 		positionX = screenWidth - shapeWidth;
+		screenCollision = 3;
 	}
 	if (positionY < 0.f) {
 		positionY = 0.f;
+		screenCollision = 2;
 	} else if (positionY + shapeHeight > screenHeight) {
-		positionY = screenHeight - shapeHeight;	
+		positionY = screenHeight - shapeHeight;
+		screenCollision = 4;
 	}
 
-	return sf::Vector2f(positionX, positionY);
+	newPosition = sf::Vector2f(positionX, positionY);
 };
 
 sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Vector2f speed, sf::Clock clock) {
 	float moveX = speed.x * clock.getElapsedTime().asSeconds();
 	float moveY = speed.y * clock.getElapsedTime().asSeconds();
 
-	return sf::Vector2f(oldPosition.x + moveX, oldPosition.y + moveY);
-}
+	return (newPosition = sf::Vector2f(oldPosition.x + moveX, oldPosition.y + moveY));
+};
+
+sf::Vector2f Updateable::checkCollisions(sf::RenderWindow* window, sf::FloatRect bounds) { 
+	//Reset Collision Values
+	screenCollision = 0;
+
+	Updateable::boundCheckScreen(window,bounds);
+	return newPosition;
+};
