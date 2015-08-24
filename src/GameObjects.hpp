@@ -10,8 +10,8 @@ class GameObjects {
 	public:
 		GameObjects();
 		~GameObjects();
-		int addObject(Updateable &);
-		int removeObject(Updateable &);
+		int addObject(Updateable*);
+		int removeObject(Updateable*);
 		void updateAll(sf::RenderWindow*, sf::Clock);
 
 	private:

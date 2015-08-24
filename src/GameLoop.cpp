@@ -15,10 +15,11 @@ GameLoop::~GameLoop() {
 };
 
 void GameLoop::createStartingObjects() {
+	//DELETED in GameObjects destructor so automatically deleted
 	Updateable* player = new Player();
 
 	gameObjects = new GameObjects();
-	gameObjects->addObject(*player);
+	gameObjects->addObject(player);
 };
 
 void GameLoop::start() {

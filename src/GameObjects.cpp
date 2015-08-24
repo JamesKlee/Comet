@@ -6,22 +6,25 @@ GameObjects::GameObjects() {
 }
 
 GameObjects::~GameObjects() {
+	for (size_t i = 0; i < objects->size(); i++) {
+		delete (objects->at(i));
+	}
 	delete objects;
 }
 
-int GameObjects::addObject(Updateable &object) {
+int GameObjects::addObject(Updateable* object) {
 	for (size_t i = 0; i < objects->size(); i++) {
-		if (objects->at(i) == &object) {
+		if (objects->at(i) == object) {
 			return 0;
 		}
 	}
-	objects->push_back(&object);
+	objects->push_back(object);
 	return 1;
 };
 
-int GameObjects::removeObject(Updateable &object) {
+int GameObjects::removeObject(Updateable* object) {
 	for (size_t i = 0; i < objects->size(); i++) {
-		if(objects->at(i) == &object) {
+		if(objects->at(i) == object) {
 			objects->erase(objects->begin() + i);
 			return 1;
 		}
