@@ -1,10 +1,14 @@
 #include "Updateable.hpp"
 
 Updateable::Updateable() {
-	screenCollision = 0;
+	screenCollision = new sf::Vector2i(0,0);
 };
 
-void Updateable::boundCheckScreen(sf::RenderWindow* window, sf::FloatRect bounds) {
+Updateable::~Updateable() {
+	delete screenCollision;
+}
+
+void Updateable::boundCheckScreen(sf::FloatRect bounds) {
 	float positionX = newPosition.x;
 	float positionY = newPosition.y;
 
@@ -16,17 +20,17 @@ void Updateable::boundCheckScreen(sf::RenderWindow* window, sf::FloatRect bounds
 
 	if (positionX < 0.f) {
 		positionX = 0.f;
-		screenCollision = 1;
+		screenCollision->x = 1;
 	} else if (positionX + shapeWidth > screenWidth) {
 		positionX = screenWidth - shapeWidth;
-		screenCollision = 3;
+		screenCollision->x = 2;
 	}
 	if (positionY < 0.f) {
 		positionY = 0.f;
-		screenCollision = 2;
+		screenCollision->y = 1;
 	} else if (positionY + shapeHeight > screenHeight) {
 		positionY = screenHeight - shapeHeight;
-		screenCollision = 4;
+		screenCollision->y = 2;
 	}
 
 	newPosition = sf::Vector2f(positionX, positionY);
@@ -41,8 +45,11 @@ sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Vector2f s
 
 sf::Vector2f Updateable::checkCollisions(sf::RenderWindow* window, sf::FloatRect bounds) { 
 	//Reset Collision Values
-	screenCollision = 0;
+	screenCollision->x = 0;
+	screenCollision->y = 0;
 
-	Updateable::boundCheckScreen(window,bounds);
+	this->window = window;
+
+	Updateable::boundCheckScreen(bounds);
 	return newPosition;
 };

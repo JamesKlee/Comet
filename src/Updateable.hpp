@@ -6,19 +6,20 @@
 class Updateable {
 	public:
 		Updateable();
-		virtual ~Updateable() {};
+		virtual ~Updateable();
 		virtual void  update(sf::RenderWindow*, sf::Clock) = 0; 
 			
 	protected:
 		sf::Vector2f updatePosition(sf::Vector2f, sf::Vector2f, sf::Clock);
 		sf::Vector2f checkCollisions(sf::RenderWindow*, sf::FloatRect);
-		int getScreenCollision();
+		sf::Vector2i getScreenCollision();
 
 	private:
-		void boundCheckScreen(sf::RenderWindow*,sf::FloatRect);
+		void boundCheckScreen(sf::FloatRect);
 		
 		sf::Vector2f newPosition;
-		int screenCollision;
+		sf::Vector2i* screenCollision;
+		sf::RenderWindow* window;
 };
 
 #endif
