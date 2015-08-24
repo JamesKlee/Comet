@@ -11,12 +11,15 @@ GameLoop::GameLoop() {
 
 GameLoop::~GameLoop() {
 	delete window;
-	delete player;
+	delete gameObjects;
 };
 
 void GameLoop::createStartingObjects() {
-	player = new Player();
-}
+	Updateable* player = new Player();
+
+	gameObjects = new GameObjects();
+	gameObjects->addObject(*player);
+};
 
 void GameLoop::start() {
 	runGameLoop();
@@ -27,37 +30,37 @@ void GameLoop::runGameLoop() {
 
     while (window->isOpen())
     {
-		sf::Event event;
-		while (window->pollEvent(event))
+	sf::Event event;
+	while (window->pollEvent(event))
         {
             switch (event.type) {
-				case sf::Event::Closed:
-					window->close();
-					break;
+		case sf::Event::Closed:
+			window->close();
+			break;
 				
-				case sf::Event::KeyPressed:
-					switch(event.key.code) {
-						case sf::Keyboard::Escape:
-							window->close();
-							break;							
+		case sf::Event::KeyPressed:
+			switch(event.key.code) {
+				case sf::Keyboard::Escape:
+					window->close();
+					break;							
 						
-						default:
-							break;
-					}
-					break;
-
 				default:
 					break;
-
 			}
+			break;
+
+		default:
+			break;
+
 		}
+	}
 
         window->clear();
 
-		//Update all objects
-		player->update(window, clock);
+	//Update all objects
+	gameObjects->updateAll(window, clock);	
 		
-		clock.restart();
+	clock.restart();
         window->display();
     }
 };

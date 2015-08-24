@@ -2,6 +2,7 @@
 #define GAMELOOP_H
 
 #include "SFML/Graphics.hpp"
+#include "GameObjects.hpp"
 #include "Player.hpp"
 
 class GameLoop {
@@ -15,7 +16,7 @@ class GameLoop {
 		void createStartingObjects();
 
 		sf::RenderWindow* window;
-		Player* player;
+		GameObjects* gameObjects;
 };
 
 #endif

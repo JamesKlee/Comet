@@ -7,5 +7,5 @@ SFML_LIB += -L../SFML/lib
 SFML_LIBS += -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network -lsfml-audio
 
 
-: foreach *.cpp |> $(COMPILER) $(CFLAGS) -c %f $(SFML_INCLUDE) -o %o |> %B.o
-: *.o |> g++ %f -o %o $(SFML_LIB) $(SFML_LIBS) |> $(OUTPUT_FILE)
+: foreach *.cpp |> $(COMPILER) $(CFLAGS) -c %f $(SFML_INCLUDE) -o %o -g |> %B.o
+: *.o |> g++ %f -o %o $(SFML_LIB) $(SFML_LIBS) -g |> $(OUTPUT_FILE)

@@ -21,7 +21,7 @@ Player::~Player() {
 	delete circle;
 };
 
-void Player::update(sf::RenderWindow* window, sf::Clock clock) {
+void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updateable*>* gameObjects) {
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		moveSpeedX = -SPEED;
@@ -35,10 +35,10 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock) {
 	}
 
 	sf::Vector2f velocity(moveSpeedX, moveSpeedY);
-	Player::updatePosition(circle->getPosition(), velocity, clock);
+	sf::Vector2f position = Player::updatePosition(circle->getPosition(), velocity, clock);
 
 	
-	sf::Vector2f position = Player::checkCollisions(window, circle->getGlobalBounds());
+	///sf::Vector2f position = Player::updateCollisions(window, 0, *this, gameObjects);
 	circle->setPosition(position);
 
 	if (position.x <= 0.f || position.x + circle->getGlobalBounds().width >= window->getSize().x) {
@@ -48,6 +48,10 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock) {
 	if (position.y <= 0.f || position.y + circle->getGlobalBounds().height>= window->getSize().y) {
 		moveSpeedY = -moveSpeedY;
 	}
-
+	
 	window->draw(*circle);	
+};
+
+sf::FloatRect Player::getBounds() {
+	return circle->getGlobalBounds();	
 };

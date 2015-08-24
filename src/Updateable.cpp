@@ -1,11 +1,13 @@
 #include "Updateable.hpp"
 
 Updateable::Updateable() {
-	screenCollision = new sf::Vector2i(0,0);
+	screenCollision = new sf::Vector2u(0,0);
+	objectCollisions = new std::vector<Updateable*>();
 };
 
 Updateable::~Updateable() {
 	delete screenCollision;
+	delete objectCollisions;
 }
 
 void Updateable::boundCheckScreen(sf::FloatRect bounds) {
@@ -36,6 +38,10 @@ void Updateable::boundCheckScreen(sf::FloatRect bounds) {
 	newPosition = sf::Vector2f(positionX, positionY);
 };
 
+sf::Vector2u Updateable::getScreenCollision() {
+	return *screenCollision;
+}
+
 sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Vector2f speed, sf::Clock clock) {
 	float moveX = speed.x * clock.getElapsedTime().asSeconds();
 	float moveY = speed.y * clock.getElapsedTime().asSeconds();
@@ -43,13 +49,26 @@ sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Vector2f s
 	return (newPosition = sf::Vector2f(oldPosition.x + moveX, oldPosition.y + moveY));
 };
 
-sf::Vector2f Updateable::checkCollisions(sf::RenderWindow* window, sf::FloatRect bounds) { 
+sf::Vector2f Updateable::checkCollisions(unsigned int bounce, Updateable &object, std::vector<Updateable*>* objects) { 
+	//NEED TO ADD COLLISION DETECTION
+	return newPosition;
+};
+
+sf::Vector2f Updateable::updateCollisions(sf::RenderWindow* window, unsigned int bounce, Updateable &object, std::vector<Updateable*>* objects) {
 	//Reset Collision Values
 	screenCollision->x = 0;
 	screenCollision->y = 0;
+	objectCollisions->clear();
 
+	//Set global window
 	this->window = window;
 
-	Updateable::boundCheckScreen(bounds);
+	Updateable::boundCheckScreen(object.getBounds());
+	Updateable::checkCollisions(bounce, object, objects);
+
 	return newPosition;
-};
+}
+
+std::vector<Updateable*>* Updateable::getObjectCollisions() {
+	return objectCollisions;
+}
