@@ -16,6 +16,8 @@ class GameObjects {
 
 	private:
 		std::vector<Updateable*>* objects;
+
+		int enabled;
 };
 
 #endif

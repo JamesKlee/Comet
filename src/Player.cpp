@@ -1,7 +1,8 @@
 #include "Player.hpp"
 #include <math.h>
+#include <iostream>
 
-Player::Player() : Player::Updateable() {
+Player::Player(bool enabled) : Player::Updateable(enabled) {
 	SPEED = 1000.0f;
 
 	circle = new sf::CircleShape(100.f, 10000);
@@ -22,7 +23,11 @@ Player::~Player() {
 };
 
 void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updateable*>* gameObjects) {
-	
+
+	if(!Player::getEnabled()) {
+		return;
+	}
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		moveSpeedX = -SPEED;
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
@@ -35,20 +40,39 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 	}
 
 	sf::Vector2f velocity(moveSpeedX, moveSpeedY);
-	sf::Vector2f position = Player::updatePosition(circle->getPosition(), velocity, clock);
+	Player::updatePosition(circle->getPosition(), velocity, clock);
 
+	Player::updateCollisions(window, 0, *this, gameObjects);
 	
-	///sf::Vector2f position = Player::updateCollisions(window, 0, *this, gameObjects);
+	std::vector<Window> screenCollisions = Player::getScreenCollisions();
+	
+	sf::Vector2f position = getNewPosition();
+
+	for (size_t i = 0; i < screenCollisions.size(); i++) {
+		switch(screenCollisions.at(i)) {
+			case WINDOW_TOP:
+				position.y = 0.f;
+				moveSpeedY = -moveSpeedY;
+				break;
+
+			case WINDOW_BOTTOM:
+				position.y = window->getSize().y - getBounds().width;
+				moveSpeedY = -moveSpeedY;
+				break;
+
+			case WINDOW_LEFT:
+				position.x = 0.f;
+				moveSpeedX = -moveSpeedX;
+				break;
+
+			case WINDOW_RIGHT:
+				position.x = window->getSize().x - getBounds().width;
+				moveSpeedX = -moveSpeedX;
+				break;
+		}
+	}
+
 	circle->setPosition(position);
-
-	if (position.x <= 0.f || position.x + circle->getGlobalBounds().width >= window->getSize().x) {
-		moveSpeedX = -moveSpeedX;
-	}
-
-	if (position.y <= 0.f || position.y + circle->getGlobalBounds().height>= window->getSize().y) {
-		moveSpeedY = -moveSpeedY;
-	}
-	
 	window->draw(*circle);	
 };
 

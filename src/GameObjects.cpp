@@ -1,5 +1,4 @@
 #include "GameObjects.hpp"
-#include <iostream>
 
 GameObjects::GameObjects() {
 	objects = new std::vector<Updateable*>();
@@ -25,6 +24,7 @@ int GameObjects::addObject(Updateable* object) {
 int GameObjects::removeObject(Updateable* object) {
 	for (size_t i = 0; i < objects->size(); i++) {
 		if(objects->at(i) == object) {
+			delete (objects->at(i));
 			objects->erase(objects->begin() + i);
 			return 1;
 		}

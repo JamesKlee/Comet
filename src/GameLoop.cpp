@@ -16,10 +16,12 @@ GameLoop::~GameLoop() {
 
 void GameLoop::createStartingObjects() {
 	//DELETED in GameObjects destructor so automatically deleted
-	Updateable* player = new Player();
-
+	//NEED TO BE CAREFUL IF OBJECTS ARE REMOVED AND NOT HANDLE
 	gameObjects = new GameObjects();
-	gameObjects->addObject(player);
+
+	for (unsigned int i = 0; i < 5; i++) {
+		gameObjects->addObject(new Player(true));
+	}
 };
 
 void GameLoop::start() {
@@ -31,37 +33,37 @@ void GameLoop::runGameLoop() {
 
     while (window->isOpen())
     {
-	sf::Event event;
-	while (window->pollEvent(event))
-        {
-            switch (event.type) {
-		case sf::Event::Closed:
-			window->close();
-			break;
+		sf::Event event;
+		while (window->pollEvent(event))
+		{
+			switch (event.type) {
+			case sf::Event::Closed:
+				window->close();
+				break;
 				
-		case sf::Event::KeyPressed:
-			switch(event.key.code) {
-				case sf::Keyboard::Escape:
-					window->close();
-					break;							
+			case sf::Event::KeyPressed:
+				switch(event.key.code) {
+					case sf::Keyboard::Escape:
+						window->close();
+						break;							
 						
-				default:
-					break;
+					default:
+						break;
+				}
+				break;
+
+			default:
+				break;
+
 			}
-			break;
-
-		default:
-			break;
-
 		}
-	}
 
-        window->clear();
+    window->clear();
 
 	//Update all objects
 	gameObjects->updateAll(window, clock);	
-		
 	clock.restart();
-        window->display();
+
+    window->display();
     }
 };

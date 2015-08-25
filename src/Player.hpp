@@ -3,11 +3,10 @@
 
 #include "Updateable.hpp"
 #include "GameObjects.hpp"
-#include <vector>
 
 class Player: public Updateable {
 	public:
-		Player();
+		Player(bool);
 		~Player();
 		void update(sf::RenderWindow*, sf::Clock, std::vector<Updateable*>*);
 		sf::FloatRect getBounds();
