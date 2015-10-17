@@ -2,20 +2,11 @@
 #include <math.h>
 #include <iostream>
 
-Player::Player(bool enabled) : Player::Updateable(enabled) {
-	SPEED = 1000.0f;
+Player::Player(ShapeEnum shapeType, bool enabled, bool solid, sf::Vector2f pos, sf::Vector2f* velocity) : Player::Updateable(shapeType, enabled, solid, velocity) {
 
-	circle = new sf::CircleShape(100.f, 10000);
+	circle = new sf::CircleShape(100.f);
 	circle->setFillColor(sf::Color::Green);
-
-	srand(time(NULL));
-	moveSpeedX = rand()%((int)SPEED*2 + 1) - (int)SPEED;
-	moveSpeedY = pow(pow(SPEED,2) - pow(moveSpeedX,2),0.5);
-	
-	if (rand()%(2) == 0) {
-		moveSpeedY = -moveSpeedY;			
-	}
-
+	circle->setPosition(pos);
 };
 
 Player::~Player() {
@@ -28,21 +19,23 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 		return;
 	}
 
+	float *speedX = &Updateable::getVelocity()->x;
+	float *speedY = &Updateable::getVelocity()->y;
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		moveSpeedX = -SPEED;
+		*speedX = -std::abs(*speedX);
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		moveSpeedX = SPEED;
+		*speedX = std::abs(*speedX);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		moveSpeedY = -SPEED;
+		*speedY = -std::abs(*speedY);
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		moveSpeedY = SPEED;
+		*speedY = std::abs(*speedY);
 	}
 
-	sf::Vector2f velocity(moveSpeedX, moveSpeedY);
-	Player::updatePosition(circle->getPosition(), velocity, clock);
+	Player::updatePosition(circle->getPosition(), clock);
 
-	Player::updateCollisions(window, 0, *this, gameObjects);
+	Player::updateCollisions(window, true, *this, gameObjects);
 	
 	std::vector<Window> screenCollisions = Player::getScreenCollisions();
 	
@@ -52,22 +45,22 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 		switch(screenCollisions.at(i)) {
 			case WINDOW_TOP:
 				position.y = 0.f;
-				moveSpeedY = -moveSpeedY;
+				*speedY = -(*speedY);
 				break;
 
 			case WINDOW_BOTTOM:
-				position.y = window->getSize().y - getBounds().width;
-				moveSpeedY = -moveSpeedY;
+				position.y = window->getSize().y - getShape()->getGlobalBounds().width;
+				*speedY = -(*speedY);
 				break;
 
 			case WINDOW_LEFT:
 				position.x = 0.f;
-				moveSpeedX = -moveSpeedX;
+				*speedX = -(*speedX);
 				break;
 
 			case WINDOW_RIGHT:
-				position.x = window->getSize().x - getBounds().width;
-				moveSpeedX = -moveSpeedX;
+				position.x = window->getSize().x - getShape()->getGlobalBounds().width;
+				*speedX = -*(speedX);
 				break;
 		}
 	}
@@ -76,6 +69,6 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 	window->draw(*circle);	
 };
 
-sf::FloatRect Player::getBounds() {
-	return circle->getGlobalBounds();	
+sf::Shape* Player::getShape() {
+	return circle;
 };

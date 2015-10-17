@@ -15,7 +15,6 @@ Updateable::Updateable(ShapeEnum shapeType, bool enabled, bool solid, sf::Vector
 Updateable::~Updateable() {
 	delete screenCollisions;
 	delete objectCollisions;
-	delete velocity;
 }
 
 void Updateable::boundCheckScreen(sf::FloatRect bounds) {
@@ -42,14 +41,14 @@ std::vector<Window> Updateable::getScreenCollisions() {
 	return *screenCollisions;
 }
 
-sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Clock clock) {
+sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Vector2f* velocity, sf::Clock clock) {
+	this->velocity = velocity;
 		
 	float moveX = velocity->x * clock.getElapsedTime().asSeconds();
 	float moveY = velocity->y * clock.getElapsedTime().asSeconds();
 
 	this->oldPosition = oldPosition;
-	this->newPosition = sf::Vector2f( oldPosition.x + moveX, oldPosition.y + moveY);
-
+	newPosition = sf::Vector2f( oldPosition.x + moveX, oldPosition.y + moveY);
 	return newPosition;
 };
 
@@ -91,14 +90,9 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 									
 									
 									float distance = std::abs(sqrt( pow(objectOrigin.x - origin.x, 2.f) + pow(objectOrigin.y - origin.y, 2.f)));
-									if (distance < bounds.width/2 + objectBounds.width/2) {
-										sf::Vector2f originObject = object.getNewPosition() + sf::Vector2f(object.getShape()->getGlobalBounds().width/2, object.getShape()->getGlobalBounds().height/2);
-										sf::Vector2f originFound = foundObject->getNewPosition() + sf::Vector2f(foundObject->getShape()->getGlobalBounds().width/2,foundObject->getShape()->getGlobalBounds().height/2);
-
-										sf::Vector2f collision = originFound - originObject;
-										sf::Vector2f tangent = sf::Vector2f(-collision.y, collision.x);
+									if (distance < bounds.width/2 + objectBounds.width/2) {	
 										newPosition = oldPosition;
-										bounceObject(object, *foundObject, bounce, tangent);
+										bounceObject(object, *foundObject, bounce);
 									}
 									break;
 
@@ -113,28 +107,8 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 	return newPosition;
 };
 
-void Updateable::bounceObject(Updateable &object, Updateable &foundObject, bool bounce, sf::Vector2f tangent) {
-
-	if (!bounce) {
-		return;
-	}
-
-	float theta = atan(tangent.x/tangent.y);
-
-	float objectx = (object.getVelocity()->x) * cos(theta);
-	float objecty = (object.getVelocity()->y) * cos(theta);
-	float objectMass = M_PI * pow(object.getShape()->getGlobalBounds().width/2, 2.0);
-
-	float foundx = (foundObject.getVelocity()->x) * cos(theta);
-	float foundy = (foundObject.getVelocity()->y) * cos(theta);
-	float foundMass = M_PI * pow(foundObject.getShape()->getGlobalBounds().width/2, 2.0);
-
-
-
-
-
-
-
+void Updateable::bounceObject(Updateable &object, Updateable &foundObject, bool bounce) {
+	
 };
 
 sf::Vector2f* Updateable::getVelocity() {

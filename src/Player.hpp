@@ -6,15 +6,15 @@
 
 class Player: public Updateable {
 	public:
-		Player(bool);
+		Player(ShapeEnum, bool, bool, sf::Vector2f, sf::Vector2f*);
 		~Player();
 		void update(sf::RenderWindow*, sf::Clock, std::vector<Updateable*>*);
-		sf::FloatRect getBounds();
+		sf::Shape* getShape();
+		ShapeEnum getShapeType();
 
 	private:
 		
 		sf::CircleShape* circle;
-		float SPEED;
 		float moveSpeedX;
 		float moveSpeedY;
 };

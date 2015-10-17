@@ -19,8 +19,8 @@ void GameLoop::createStartingObjects() {
 	//NEED TO BE CAREFUL IF OBJECTS ARE REMOVED AND NOT HANDLE
 	gameObjects = new GameObjects();
 
-	for (unsigned int i = 0; i < 5; i++) {
-		gameObjects->addObject(new Player(true));
+	for (unsigned int i = 0; i < 5; i++) { 
+		gameObjects->addObject(new Player(circle, true, true, sf::Vector2f(i* 250.f, 0), new sf::Vector2f(300.f, 300.f)));
 	}
 };
 
