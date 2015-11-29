@@ -32,11 +32,12 @@ class Updateable {
 		ShapeEnum getShapeType();
 		void setShapeType(ShapeEnum);
 		sf::Vector2f* getVelocity();
+		void setVelocity(sf::Vector2f*);
 
 	private:
 		void boundCheckScreen(sf::FloatRect);
 		sf::Vector2f checkCollisions(bool, Updateable &, std::vector<Updateable*>*);
-		void bounceObject(Updateable &, Updateable &, bool, sf::Vector2f);
+		void bounceObject(Updateable &, Updateable &, bool);
 
 		sf::Vector2f newPosition;
 		sf::Vector2f oldPosition;

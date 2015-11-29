@@ -92,13 +92,8 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 									
 									float distance = std::abs(sqrt( pow(objectOrigin.x - origin.x, 2.f) + pow(objectOrigin.y - origin.y, 2.f)));
 									if (distance < bounds.width/2 + objectBounds.width/2) {
-										sf::Vector2f originObject = object.getNewPosition() + sf::Vector2f(object.getShape()->getGlobalBounds().width/2, object.getShape()->getGlobalBounds().height/2);
-										sf::Vector2f originFound = foundObject->getNewPosition() + sf::Vector2f(foundObject->getShape()->getGlobalBounds().width/2,foundObject->getShape()->getGlobalBounds().height/2);
-
-										sf::Vector2f collision = originFound - originObject;
-										sf::Vector2f tangent = sf::Vector2f(-collision.y, collision.x);
 										newPosition = oldPosition;
-										bounceObject(object, *foundObject, bounce, tangent);
+										bounceObject(object, *foundObject, bounce);
 									}
 									break;
 
@@ -113,32 +108,78 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 	return newPosition;
 };
 
-void Updateable::bounceObject(Updateable &object, Updateable &foundObject, bool bounce, sf::Vector2f tangent) {
+void Updateable::bounceObject(Updateable &object, Updateable &foundObject, bool bounce) {
 
 	if (!bounce) {
 		return;
 	}
+	
+	float sign = 0.f;
 
-	float theta = atan(tangent.x/tangent.y);
+	float x1 = object.getNewPosition().x;
+	float y1 = object.getNewPosition().y;
+	float vx1 = object.getVelocity()->x;
+	float vy1 = object.getVelocity()->y;
+	float r1 = object.getShape()->getGlobalBounds().width/2.f;
+	float m1 = M_PI * pow(r1,2.f);
 
-	float objectx = (object.getVelocity()->x) * cos(theta);
-	float objecty = (object.getVelocity()->y) * cos(theta);
-	float objectMass = M_PI * pow(object.getShape()->getGlobalBounds().width/2, 2.0);
+	float x2 = foundObject.getNewPosition().x;
+	float y2 = foundObject.getNewPosition().y;
+	float vx2 = foundObject.getVelocity()->x;
+	float vy2 = foundObject.getVelocity()->y;
+	float r2 = foundObject.getShape()->getGlobalBounds().width/2.f;
+	float m2 = M_PI * pow(r2,2.f);
 
-	float foundx = (foundObject.getVelocity()->x) * cos(theta);
-	float foundy = (foundObject.getVelocity()->y) * cos(theta);
-	float foundMass = M_PI * pow(foundObject.getShape()->getGlobalBounds().width/2, 2.0);
+	float x21 = x2 - x1;
+	float y21 = y2 - y1;
+	float vx21 = vx2 - vx1;
+	float vy21 = vy2 - vy2;
+	float m21 = m2/m1;
 
+	float vx_cm = (m1*vx1 + m2*vx2) / (m1 + m2);
+	float vy_cm = (m1*vy1 + m2*vy2) / (m1 + m2);
 
+	//Return old velocities if not approaching
+	if ( (vx21*x21 + vy21*y21) >= 0) {
+		return;
+	} 
 
+	float fy21 = 1.0E-12*fabs(y21);                            
+	if ( fabs(x21) < fy21 ) {  
+		if (x21 < 0) { 
+			sign = -1;
+		} else { 
+			sign = 1;
+		}  
+		x21 = fy21*sign; 
+	} 
 
+	//update velocities
+	float a = y21/x21;
+	float dvx2 = -2*(vx21 + a*vy21)/((1 + a*a)*(1 + m21));
+	vx2 = vx2 + dvx2;
+	vy2 = vy2 + a*dvx2;
+	vx1 = vx1 - m21*dvx2;
+	vy1 = vy1 - a*m21*dvx2;
 
+	//velocity correction for inelastic collisions
+	float R = 1.0; //CHANGE THIS LATER
+	vx1 = (vx1-vx_cm)*R + vx_cm;
+	vy1 = (vy1-vy_cm)*R + vy_cm;
+	vx2 = (vx2-vx_cm)*R + vx_cm;
+	vy2 = (vy2-vy_cm)*R + vy_cm;
 
-
+	//Update velocities
+	object.setVelocity(new sf::Vector2f(vx1,vy1));
+	foundObject.setVelocity(new sf::Vector2f(vx2,vy2));
 };
 
 sf::Vector2f* Updateable::getVelocity() {
 	return velocity;
+};
+
+void Updateable::setVelocity(sf::Vector2f* newVelocity) {
+	velocity = newVelocity;
 };
 
 sf::Vector2f Updateable::updateCollisions(sf::RenderWindow* window, bool bounce, Updateable &object, std::vector<Updateable*>* objects) {
