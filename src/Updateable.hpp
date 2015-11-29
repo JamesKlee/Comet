@@ -33,6 +33,7 @@ class Updateable {
 		void setShapeType(ShapeEnum);
 		sf::Vector2f* getVelocity();
 		void setVelocity(sf::Vector2f*);
+		void setPosition(sf::Vector2f);
 
 	private:
 		void boundCheckScreen(sf::FloatRect);

@@ -35,10 +35,7 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 
 	Player::updatePosition(circle->getPosition(), clock);
 
-	Player::updateCollisions(window, true, *this, gameObjects);
-	
 	std::vector<Window> screenCollisions = Player::getScreenCollisions();
-	
 	sf::Vector2f position = getNewPosition();
 
 	for (size_t i = 0; i < screenCollisions.size(); i++) {
@@ -49,7 +46,7 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 				break;
 
 			case WINDOW_BOTTOM:
-				position.y = window->getSize().y - getShape()->getGlobalBounds().width;
+				position.y = window->getSize().y - getShape()->getGlobalBounds().height;
 				*speedY = -(*speedY);
 				break;
 
@@ -64,6 +61,10 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 				break;
 		}
 	}
+	setPosition(position);
+
+	Player::updateCollisions(window, true, *this, gameObjects);
+	position = getNewPosition();
 
 	circle->setPosition(position);
 	window->draw(*circle);	

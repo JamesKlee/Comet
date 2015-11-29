@@ -26,14 +26,14 @@ void Updateable::boundCheckScreen(sf::FloatRect bounds) {
 	float shapeWidth = bounds.width;
 	float shapeHeight = bounds.height;
 
-	if (newPosition.x <= 0.f) {
+	if (newPosition.x < 0.f) {
 		screenCollisions->push_back(WINDOW_LEFT);
-	} else if (newPosition.x + shapeWidth >= screenWidth) {
+	} else if (newPosition.x + shapeWidth > screenWidth) {
 		screenCollisions->push_back(WINDOW_RIGHT);
 	}
-	if (newPosition.y <= 0.f) {
+	if (newPosition.y < 0.f) {
 		screenCollisions->push_back(WINDOW_TOP);
-	} else if (newPosition.y + shapeHeight >= screenHeight) {
+	} else if (newPosition.y + shapeHeight > screenHeight) {
 		screenCollisions->push_back(WINDOW_BOTTOM);
 	}
 };
@@ -211,6 +211,10 @@ void Updateable::setEnabled(bool enabled) {
 sf::Vector2f Updateable::getNewPosition() {
 	return newPosition;
 }
+
+void Updateable::setPosition(sf::Vector2f newPos) {
+	newPosition = newPos;
+};
 
 sf::Vector2f Updateable::getOldPosition() {
 	return oldPosition;
