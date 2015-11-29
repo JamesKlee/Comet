@@ -47,7 +47,6 @@ sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Clock cloc
 	float moveX = velocity->x * clock.getElapsedTime().asSeconds();
 	float moveY = velocity->y * clock.getElapsedTime().asSeconds();
 
-	this->oldPosition = oldPosition;
 	this->newPosition = sf::Vector2f( oldPosition.x + moveX, oldPosition.y + moveY);
 
 	return newPosition;
@@ -65,10 +64,10 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 			Updateable* foundObject = objects->at(i);
 						
 			if (foundObject->getEnabled() && foundObject->isSolid()) {
-				sf::FloatRect bounds = object.getShape()->getGlobalBounds();
-				sf::FloatRect objectBounds = foundObject->getShape()->getGlobalBounds();
+				sf::FloatRect objectBounds = object.getShape()->getGlobalBounds();
+				sf::FloatRect foundBounds = foundObject->getShape()->getGlobalBounds();
 
-				if(bounds.intersects(objectBounds)) {
+				if(objectBounds.intersects(foundBounds)) {
 					objectCollisions->push_back(foundObject);
 
 					switch(object.getShapeType()) {
@@ -77,8 +76,8 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 							break;
 
 						case circle:
-							float width = object.getShape()->getGlobalBounds().width/2.f;
-							sf::Vector2f origin =  newPosition + sf::Vector2f(width, width);
+							float objectWidth = object.getShape()->getGlobalBounds().width/2.f;
+							sf::Vector2f objectOrigin =  newPosition + sf::Vector2f(objectWidth, objectWidth);
 
 							switch (foundObject->getShapeType()) {
 
@@ -86,18 +85,21 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 									break;
 
 								case circle:
-									float objectWidth = foundObject->getShape()->getGlobalBounds().width/2.f;
-									sf::Vector2f objectOrigin = foundObject->getNewPosition() + sf::Vector2f(objectWidth, objectWidth);
+									float foundWidth = foundObject->getShape()->getGlobalBounds().width/2.f;
+									sf::Vector2f foundOrigin = foundObject->getNewPosition() + sf::Vector2f(foundWidth, foundWidth);
 									
 									
-									float distance = std::abs(sqrt( pow(objectOrigin.x - origin.x, 2.f) + pow(objectOrigin.y - origin.y, 2.f)));
-									if (distance < bounds.width/2 + objectBounds.width/2) {
-										newPosition = oldPosition;
+									float distance = std::abs(sqrt( pow(foundOrigin.x - objectOrigin.x, 2.f) + pow(foundOrigin.y - objectOrigin.y, 2.f)));
+									if (distance < objectBounds.width/2.f + foundBounds.width/2.f) {
+
+										sf::Vector2f unitCV = sf::Vector2f(objectOrigin.x-foundOrigin.x, objectOrigin.y-foundOrigin.y)/distance;
+										sf::Vector2f CV = unitCV * (objectBounds.width/2.f + foundBounds.width/2.f);
+										newPosition = foundObject->getNewPosition() + CV;
 										bounceObject(object, *foundObject, bounce);
 									}
 									break;
 
-															} 
+							} 
 							break;
 					}
 				}
@@ -163,7 +165,7 @@ void Updateable::bounceObject(Updateable &object, Updateable &foundObject, bool 
 	vy1 = vy1 - a*m21*dvx2;
 
 	//velocity correction for inelastic collisions
-	float R = 1.0; //CHANGE THIS LATER
+	float R = 0.0; //CHANGE THIS LATER
 	vx1 = (vx1-vx_cm)*R + vx_cm;
 	vy1 = (vy1-vy_cm)*R + vy_cm;
 	vx2 = (vx2-vx_cm)*R + vx_cm;
@@ -215,10 +217,6 @@ sf::Vector2f Updateable::getNewPosition() {
 void Updateable::setPosition(sf::Vector2f newPos) {
 	newPosition = newPos;
 };
-
-sf::Vector2f Updateable::getOldPosition() {
-	return oldPosition;
-}
 
 bool Updateable::isSolid() {
 	return solid;

@@ -20,7 +20,6 @@ class Updateable {
 		bool getEnabled();
 		void setEnabled(bool);
 		sf::Vector2f getNewPosition();
-		sf::Vector2f getOldPosition();
 
 	protected:
 		sf::Vector2f updatePosition(sf::Vector2f, sf::Clock);
@@ -41,7 +40,6 @@ class Updateable {
 		void bounceObject(Updateable &, Updateable &, bool);
 
 		sf::Vector2f newPosition;
-		sf::Vector2f oldPosition;
 		std::vector<Window>* screenCollisions;
 		sf::RenderWindow* window;
 		std::vector<Updateable*>* objectCollisions;
