@@ -19,7 +19,8 @@ class Updateable {
 		virtual void  update(sf::RenderWindow*, sf::Clock, std::vector<Updateable*>*) = 0; 
 		bool getEnabled();
 		void setEnabled(bool);
-		sf::Vector2f getNewPosition();
+		sf::Vector2f getPosition();
+		sf::Vector2f* getVelocity();
 
 	protected:
 		sf::Vector2f updatePosition(sf::Vector2f, sf::Clock);
@@ -30,7 +31,6 @@ class Updateable {
 		std::vector<Updateable*>* getObjectCollisions();
 		ShapeEnum getShapeType();
 		void setShapeType(ShapeEnum);
-		sf::Vector2f* getVelocity();
 		void setVelocity(sf::Vector2f*);
 		void setPosition(sf::Vector2f);
 
@@ -39,7 +39,7 @@ class Updateable {
 		sf::Vector2f checkCollisions(bool, Updateable &, std::vector<Updateable*>*);
 		void bounceObject(Updateable &, Updateable &, bool);
 
-		sf::Vector2f newPosition;
+		sf::Vector2f position;
 		std::vector<Window>* screenCollisions;
 		sf::RenderWindow* window;
 		std::vector<Updateable*>* objectCollisions;

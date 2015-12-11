@@ -4,6 +4,7 @@
 #include "SFML/Graphics.hpp"
 #include <vector>
 #include "Updateable.hpp"
+#include <iostream>
 
 class GameObjects {
 	

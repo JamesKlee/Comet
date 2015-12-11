@@ -33,7 +33,15 @@ int GameObjects::removeObject(Updateable* object) {
 };
 
 void GameObjects::updateAll(sf::RenderWindow* window, sf::Clock clock) {
-	for (size_t i = 0; i < objects->size(); i ++) {
+
+	float avgSpeed = 0.f;
+
+	for (size_t i = 0; i < objects->size(); i++) {
 		(objects->at(i))->update(window, clock, objects);
+		sf::Vector2f* vel = (objects->at(i))->getVelocity();
+		avgSpeed += sqrt( pow(vel->x,2.f) +  pow(vel->y,2.f));
 	}
+	avgSpeed /= objects->size();
+
+	std::cout << avgSpeed << std::endl;
 }

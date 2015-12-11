@@ -4,8 +4,14 @@
 
 Player::Player(ShapeEnum shapeType, bool enabled, bool solid, sf::Vector2f pos, sf::Vector2f* velocity) : Player::Updateable(shapeType, enabled, solid, velocity) {
 
-	circle = new sf::CircleShape(100.f);
-	circle->setFillColor(sf::Color::Green);
+	circle = new sf::CircleShape(20.f);
+	
+	int r = rand() % 2;
+	if (r == 1) {
+		circle->setFillColor(sf::Color::Green);
+	} else {
+		circle->setFillColor(sf::Color::Red);
+	}
 	circle->setPosition(pos);
 };
 
@@ -23,20 +29,20 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 	float *speedY = &Updateable::getVelocity()->y;
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		*speedX = -std::abs(*speedX);
+		//*speedX = -std::abs(*speedX);
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		*speedX = std::abs(*speedX);
+		//*speedX = std::abs(*speedX);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		*speedY = -std::abs(*speedY);
+		//*speedY = -std::abs(*speedY);
 	} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		*speedY = std::abs(*speedY);
+		//*speedY = std::abs(*speedY);
 	}
 
 	Player::updatePosition(circle->getPosition(), clock);
 
 	std::vector<Window> screenCollisions = Player::getScreenCollisions();
-	sf::Vector2f position = getNewPosition();
+	sf::Vector2f position = getPosition();
 
 	for (size_t i = 0; i < screenCollisions.size(); i++) {
 		switch(screenCollisions.at(i)) {
@@ -64,7 +70,7 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 	setPosition(position);
 
 	Player::updateCollisions(window, true, *this, gameObjects);
-	position = getNewPosition();
+	position = getPosition();
 
 	circle->setPosition(position);
 	window->draw(*circle);	

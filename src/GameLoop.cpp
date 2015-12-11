@@ -19,8 +19,8 @@ void GameLoop::createStartingObjects() {
 	//NEED TO BE CAREFUL IF OBJECTS ARE REMOVED AND NOT HANDLE
 	gameObjects = new GameObjects();
 
-	for (unsigned int i = 0; i < 5; i++) { 
-		gameObjects->addObject(new Player(circle, true, true, sf::Vector2f(i* 250.f, 0), new sf::Vector2f(300.f, 300.f)));
+	for (unsigned int i = 0; i < 500; i++) { 
+		gameObjects->addObject(new Player(circle, true, true, sf::Vector2f(5.f, 5.f), new sf::Vector2f(350.f, 350.f)));
 	}
 };
 
@@ -31,39 +31,39 @@ void GameLoop::start() {
 void GameLoop::runGameLoop() {
 	sf::Clock clock;
 
-    while (window->isOpen())
-    {
+	 while (window->isOpen())
+	{
 		sf::Event event;
 		while (window->pollEvent(event))
 		{
 			switch (event.type) {
-			case sf::Event::Closed:
-				window->close();
-				break;
+				case sf::Event::Closed:
+					window->close();
+					break;
 				
-			case sf::Event::KeyPressed:
-				switch(event.key.code) {
-					case sf::Keyboard::Escape:
-						window->close();
-						break;							
+				case sf::Event::KeyPressed:
+					switch(event.key.code) {
+						case sf::Keyboard::Escape:
+							window->close();
+							break;							
 						
-					default:
-						break;
-				}
-				break;
+						default:
+							break;
+					}
+					break;
 
-			default:
-				break;
+				default:
+					break;
 
 			}
 		}
 
-    window->clear();
+		window->clear();
 
-	//Update all objects
-	gameObjects->updateAll(window, clock);	
-	clock.restart();
+		//Update all objects
+		gameObjects->updateAll(window, clock);	
+		clock.restart();
 
-    window->display();
-    }
+		window->display();
+	}
 };
