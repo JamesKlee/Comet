@@ -1,5 +1,6 @@
 #include "Updateable.hpp"
 #include <iostream>
+#include <algorithm>
 
 Updateable::Updateable(ShapeEnum shapeType, bool enabled, bool solid, sf::Vector2f* velocity) {
 	screenCollisions = new std::vector<Window>();
@@ -26,14 +27,18 @@ void Updateable::boundCheckScreen(sf::FloatRect bounds) {
 	float shapeWidth = bounds.width;
 	float shapeHeight = bounds.height;
 
-	if (position.x < 0.f) {
+	if ((position.x < 0.f) and (std::find(screenCollisions->begin(), screenCollisions->end(), WINDOW_LEFT) == screenCollisions->end())) {
+		position.x = 0.f;
 		screenCollisions->push_back(WINDOW_LEFT);
-	} else if (position.x + shapeWidth > screenWidth) {
+	} else if ((position.x + shapeWidth > screenWidth) and (std::find(screenCollisions->begin(), screenCollisions->end(), WINDOW_RIGHT) == screenCollisions->end())) {
+		position.x = window->getSize().x - getShape()->getGlobalBounds().width;
 		screenCollisions->push_back(WINDOW_RIGHT);
 	}
-	if (position.y < 0.f) {
+	if ((position.y < 0.f) and (std::find(screenCollisions->begin(), screenCollisions->end(), WINDOW_TOP) == screenCollisions->end())) {
+		position.y = 0.f;
 		screenCollisions->push_back(WINDOW_TOP);
-	} else if (position.y + shapeHeight > screenHeight) {
+	} else if ((position.y + shapeHeight > screenHeight) and (std::find(screenCollisions->begin(), screenCollisions->end(), WINDOW_BOTTOM) == screenCollisions->end())) {
+		position.y = window->getSize().y - getShape()->getGlobalBounds().height;
 		screenCollisions->push_back(WINDOW_BOTTOM);
 	}
 };
@@ -43,6 +48,10 @@ std::vector<Window> Updateable::getScreenCollisions() {
 }
 
 sf::Vector2f Updateable::updatePosition(sf::Vector2f oldPosition, sf::Clock clock) {
+
+	//Reset Collision Values
+	screenCollisions->clear();
+	objectCollisions->clear();
 		
 	float moveX = velocity->x * clock.getElapsedTime().asSeconds();
 	float moveY = velocity->y * clock.getElapsedTime().asSeconds();
@@ -99,6 +108,7 @@ sf::Vector2f Updateable::checkCollisions(bool bounce, Updateable &object, std::v
 										}
 										sf::Vector2f CV = unitCV * (objectBounds.width/2.f + foundBounds.width/2.f);
 										foundObject->setPosition(getPosition() + CV);
+										//foundObject->checkCollisions(true, *foundObject, objects);
 									//	bounceObject(object, *foundObject, bounce);
 									}
 									break;
@@ -189,10 +199,6 @@ void Updateable::setVelocity(sf::Vector2f* newVelocity) {
 };
 
 sf::Vector2f Updateable::updateCollisions(sf::RenderWindow* window, bool bounce, Updateable &object, std::vector<Updateable*>* objects) {
-	//Reset Collision Values
-	screenCollisions->clear();
-	objectCollisions->clear();
-
 	//Set global window
 	this->window = window;
 

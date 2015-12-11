@@ -4,7 +4,7 @@ GameLoop::GameLoop() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 	sf::VideoMode resolution = sf::VideoMode::getDesktopMode();
-    window = new sf::RenderWindow(resolution, "Comet", sf::Style::None, settings);
+	window = new sf::RenderWindow(resolution, "Comet", sf::Style::None, settings);
 	window->setVerticalSyncEnabled(true);
 	createStartingObjects();
 };
@@ -19,7 +19,7 @@ void GameLoop::createStartingObjects() {
 	//NEED TO BE CAREFUL IF OBJECTS ARE REMOVED AND NOT HANDLE
 	gameObjects = new GameObjects();
 
-	for (unsigned int i = 0; i < 500; i++) { 
+	for (unsigned int i = 0; i < 10; i++) { 
 		gameObjects->addObject(new Player(circle, true, true, sf::Vector2f(5.f, 5.f), new sf::Vector2f(350.f, 350.f)));
 	}
 };

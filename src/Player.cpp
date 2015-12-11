@@ -4,7 +4,7 @@
 
 Player::Player(ShapeEnum shapeType, bool enabled, bool solid, sf::Vector2f pos, sf::Vector2f* velocity) : Player::Updateable(shapeType, enabled, solid, velocity) {
 
-	circle = new sf::CircleShape(20.f);
+	circle = new sf::CircleShape(150.f);
 	
 	int r = rand() % 2;
 	if (r == 1) {
@@ -39,38 +39,31 @@ void Player::update(sf::RenderWindow* window, sf::Clock clock, std::vector<Updat
 		//*speedY = std::abs(*speedY);
 	}
 
-	Player::updatePosition(circle->getPosition(), clock);
-
+	Player::updatePosition(getPosition(), clock);
+	Player::updateCollisions(window, true, *this, gameObjects);
+	
 	std::vector<Window> screenCollisions = Player::getScreenCollisions();
 	sf::Vector2f position = getPosition();
 
 	for (size_t i = 0; i < screenCollisions.size(); i++) {
 		switch(screenCollisions.at(i)) {
 			case WINDOW_TOP:
-				position.y = 0.f;
 				*speedY = -(*speedY);
 				break;
 
 			case WINDOW_BOTTOM:
-				position.y = window->getSize().y - getShape()->getGlobalBounds().height;
 				*speedY = -(*speedY);
 				break;
 
 			case WINDOW_LEFT:
-				position.x = 0.f;
 				*speedX = -(*speedX);
 				break;
 
 			case WINDOW_RIGHT:
-				position.x = window->getSize().x - getShape()->getGlobalBounds().width;
 				*speedX = -*(speedX);
 				break;
 		}
 	}
-	setPosition(position);
-
-	Player::updateCollisions(window, true, *this, gameObjects);
-	position = getPosition();
 
 	circle->setPosition(position);
 	window->draw(*circle);	
